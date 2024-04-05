@@ -31,6 +31,21 @@ public class TokenService {
             throw new RuntimeException("Error while authenticating");
         }
     }
+
+    public String validateToken(String token){
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return  JWT.require(algorithm)
+                    .withIssuer("login-auth-api")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+
+        } catch (JWTCreationException exception){
+            return null;
+        }
+    }
+
     private Instant generateExpirationDate(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
